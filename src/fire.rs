@@ -26,7 +26,7 @@ impl SimpleState for Fire {
         let sprite_sheet_handle_pixel = load_sprite_sheet_pixel(world);
 
         //initialise_paddles(world, sprite_sheet_handle_pixel);
-        world.register::<Pixel>();
+        //world.register::<Pixel>();
         initialise_pixel(world, sprite_sheet_handle_pixel);
         initialise_camera(world);
     }
@@ -71,7 +71,7 @@ fn initialise_pixel(world: &mut World, sprite_sheet: SpriteSheetHandle) {
     let mut transform = Transform::default();
 
     let y = ARENA_HEIGHT / 2.0;
-    transform.set_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.5, 0.0);
+    transform.set_xyz(ARENA_WIDTH * 0.5, 0.0, 0.0);
 
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet.clone(),

@@ -32,7 +32,7 @@ impl<'s> System<'s> for MovePixelSystem {
             local.translate_y(50.0 * time.delta_seconds());
             
             let pixel_y = local.translation().y;
-            if pixel_y >= ARENA_HEIGHT*0.5 {
+            if pixel_y >= ARENA_HEIGHT {
                 entities.delete(entity);
             }
         }

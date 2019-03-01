@@ -13,6 +13,7 @@ use amethyst::ui::{Anchor, TtfFormat, UiText, UiTransform};
 //Arena
 pub const ARENA_HEIGHT: f32 = 100.0;
 pub const ARENA_WIDTH: f32 = 100.0;
+pub const RELATIVE_FIRE_HEIGHT: f32 = 0.5;
 
 pub struct Fire;
 
@@ -83,7 +84,7 @@ fn initialise_pixel(world: &mut World, sprite_sheet: SpriteSheetHandle) {
         .with(sprite_render.clone())
         .with(Pixel::new())
         .with(transform)
-        .with(FirePixelAnimation::new(0,2))
+        .with(FirePixelAnimation::new(0 as usize, 34 as usize))
         .build();
 
 }
@@ -116,8 +117,7 @@ fn load_sprite_sheet_pixel(world: &mut World) -> SpriteSheetHandle {
 pub struct FirePixelAnimation {
     pub start_sprite_index: usize,
     pub frames: usize,
-    pub current_frame: u32,
-    pub elapsed_time: f32,
+    pub current_frame: usize,
 }
 
 //Simple animation component
@@ -127,7 +127,6 @@ impl FirePixelAnimation {
             start_sprite_index: start_sprite_index,
             frames: frames,
             current_frame: 0,
-            elapsed_time: 0.0,
         }
     }
 }

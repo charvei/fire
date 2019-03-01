@@ -83,6 +83,7 @@ fn initialise_pixel(world: &mut World, sprite_sheet: SpriteSheetHandle) {
         .with(sprite_render.clone())
         .with(Pixel::new())
         .with(transform)
+        .with(FirePixelAnimation::new(0,2))
         .build();
 
 }
@@ -110,4 +111,27 @@ fn load_sprite_sheet_pixel(world: &mut World) -> SpriteSheetHandle {
         (),
         &sprite_sheet_store,
     )
+}
+
+pub struct FirePixelAnimation {
+    pub start_sprite_index: usize,
+    pub frames: usize,
+    pub current_frame: u32,
+    pub elapsed_time: f32,
+}
+
+//Simple animation component
+impl FirePixelAnimation {
+    pub fn new(start_sprite_index: usize, frames: usize) -> FirePixelAnimation {
+        FirePixelAnimation {
+            start_sprite_index: start_sprite_index,
+            frames: frames,
+            current_frame: 0,
+            elapsed_time: 0.0,
+        }
+    }
+}
+
+impl Component for FirePixelAnimation{
+    type Storage = DenseVecStorage<Self>;
 }

@@ -28,7 +28,8 @@ impl SimpleState for Fire {
 
         //initialise_paddles(world, sprite_sheet_handle_pixel);
         //world.register::<Pixel>();
-        initialise_pixel(world, sprite_sheet_handle_pixel);
+        //initialise_pixel(world, sprite_sheet_handle_pixel);
+        initialise_generator(world, sprite_sheet_handle_pixel);
         initialise_camera(world);
     }
 
@@ -55,7 +56,7 @@ pub struct Pixel {
 }
 
 impl Pixel {
-    fn new() -> Pixel {
+    pub fn new() -> Pixel {
         Pixel {
             width: 1.0,
             height: 1.0,
@@ -133,4 +134,39 @@ impl FirePixelAnimation {
 
 impl Component for FirePixelAnimation{
     type Storage = DenseVecStorage<Self>;
+}
+
+pub struct PixelGenerator {
+    pub frequency: f32,
+    pub sprite_sheet: SpriteSheetHandle,
+    pub counter: u32,
+}
+
+impl PixelGenerator {
+    pub fn new(frequency: f32, sprite_sheet: SpriteSheetHandle) -> PixelGenerator {
+        PixelGenerator {
+            frequency: frequency,
+            sprite_sheet: sprite_sheet,
+            counter: 0,
+        }
+    }
+}
+
+impl Component for PixelGenerator {
+    type Storage = DenseVecStorage<Self>;
+}
+
+//Initialise a pixel in center of screen
+fn initialise_generator(world: &mut World, sprite_sheet: SpriteSheetHandle) {
+
+    let sprite_render = SpriteRender {
+        sprite_sheet: sprite_sheet.clone(),
+        sprite_number: 0,
+    };
+
+    world
+        .create_entity()
+        .with(PixelGenerator::new(1.0, sprite_sheet))
+        .build();
+
 }

@@ -24,7 +24,7 @@ fn main() -> amethyst::Result<()> {
     let path = format!("{}/resources/display_config.ron", application_root_dir());
     let config = DisplayConfig::load(&path);
 
-    /*Rendering code -- dunno what it does yet*/
+    /*Rendering code*/
     let pipe = Pipeline::build()
         .with_stage(
             Stage::with_backbuffer()
@@ -50,8 +50,11 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(input_bundle)?
         .with_bundle(UiBundle::<String, String>::new())?
         .with(systems::MovePixelSystem, "move_pixel_system", &[])
-        .with(systems::AnimatePixelSystem, "animate_pixel_system", &[])
-        .with(systems::GeneratePixelSystem, "generate_pixel_system", &["move_pixel_system", "animate_pixel_system"])
+        .with(systems::SpreadFireSystem, "spread_fire_system", &[
+
+        ])
+        //.with(systems::AnimatePixelSystem, "animate_pixel_system", &[])
+        //.with(systems::GeneratePixelSystem, "generate_pixel_system", &["move_pixel_system", "animate_pixel_system"])
         ;
 
     let mut game = Application::new("./", Fire, game_data)?;

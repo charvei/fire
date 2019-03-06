@@ -11,8 +11,8 @@ use amethyst::ui::{Anchor, TtfFormat, UiText, UiTransform};
 
 /*Good idea to define constants in the 'game' code*/
 //Arena
-pub const ARENA_HEIGHT: f32 = 100.0;
-pub const ARENA_WIDTH: f32 = 100.0;
+pub const ARENA_HEIGHT: f32 = 50.0;
+pub const ARENA_WIDTH: f32 = 50.0;
 pub const RELATIVE_FIRE_HEIGHT: f32 = 0.5;
 
 pub struct Fire;
@@ -28,8 +28,11 @@ impl SimpleState for Fire {
 
         //initialise_paddles(world, sprite_sheet_handle_pixel);
         //world.register::<Pixel>();
+        world.register::<PixelGrid>();
+
         //initialise_pixel(world, sprite_sheet_handle_pixel);
-        initialise_generator(world, sprite_sheet_handle_pixel);
+        //initialise_generator(world, sprite_sheet_handle_pixel);
+        initialise_boardz(world, sprite_sheet_handle_pixel);
         initialise_camera(world);
     }
 
@@ -53,13 +56,17 @@ fn initialise_camera(world: &mut World) {
 pub struct Pixel {
     pub width: f32,
     pub height: f32,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl Pixel {
-    pub fn new() -> Pixel {
+    pub fn new(x: u32, y: u32) -> Pixel {
         Pixel {
             width: 1.0,
             height: 1.0,
+            x: x,
+            y: y,
         }
     }
 }
@@ -83,7 +90,7 @@ fn initialise_pixel(world: &mut World, sprite_sheet: SpriteSheetHandle) {
     world
         .create_entity()
         .with(sprite_render.clone())
-        .with(Pixel::new())
+        //.with(Pixel::new())
         .with(transform)
         .with(FirePixelAnimation::new(0 as usize, 34 as usize))
         .build();
@@ -115,6 +122,126 @@ fn load_sprite_sheet_pixel(world: &mut World) -> SpriteSheetHandle {
     )
 }
 
+fn initialise_board(world: &mut World, sprite_sheet: SpriteSheetHandle) {
+    for x in 0..(ARENA_WIDTH + 1 as f32) as u32 {
+        for y in 0..(ARENA_HEIGHT as f32) as u32 {
+            let mut transform = Transform::default();
+            transform.set_xyz(x as f32, y as f32, 0.0);
+
+            let sprite_number = if y == 0 {
+                0
+            } else {
+                34
+            };
+
+            let sprite_render = SpriteRender {
+                sprite_sheet: sprite_sheet.clone(),
+                sprite_number: sprite_number,
+            };
+
+            world
+                .create_entity()
+                .with(sprite_render.clone())
+                .with(Pixel::new(transform.translation().x as u32, transform.translation().y as u32))
+                .with(FirePixelAnimation::new(0 as usize, 34 as usize))
+                .with(transform)
+                .build();
+        }
+    }
+}
+
+pub struct PixelGrid {
+    pub grid: Vec<Vec<Entity>>,
+}
+
+impl PixelGrid {
+    pub fn new(world: &mut World, sprite_sheet: SpriteSheetHandle) -> PixelGrid {
+        let mut grid: Vec<Vec<Entity>> = Vec::new();
+        for y in 0..(ARENA_HEIGHT as f32) as u32 {
+            let mut row = Vec::new();
+            
+            for x in 0..(ARENA_WIDTH + 1 as f32) as u32 {
+                //println!("x,y: {},{}", x, y);
+                let mut transform = Transform::default();
+                transform.set_xyz(x as f32, y as f32, 0.0);
+
+                let sprite_number = if y == 0 {
+                    0
+                } else {
+                    34
+                };
+
+                let sprite_render = SpriteRender {
+                    sprite_sheet: sprite_sheet.clone(),
+                    sprite_number: sprite_number,
+                };
+                //println!("x: {}, y:{}",transform.translation().x as u32, transform.translation().y as u32);
+                
+                let ent = world
+                    .create_entity()
+                    .with(sprite_render.clone())
+                    .with(Pixel::new(transform.translation().x as u32, transform.translation().y as u32))
+                    .with(FirePixelAnimation::new(0 as usize, 34 as usize))
+                    .with(transform)
+                    .build();
+                
+                //row.push(Pixel::new(transform.translation().x as u32, transform.translation().y as u32));
+                row.push(ent);
+            }
+            grid.push(row);
+        }
+        PixelGrid {
+            grid: grid,
+        }
+    }
+}
+
+impl Component for PixelGrid {
+    type Storage = DenseVecStorage<Self>;
+}
+
+fn initialise_boardz(world: &mut World, sprite_sheet: SpriteSheetHandle) {
+    let pixel_grid: PixelGrid = PixelGrid::new(world, sprite_sheet);
+
+    // let i = 0;
+    // for row in &pixel_grid.grid {
+    //     let j = 0;
+        
+    //     for pixel in row {
+    //         let mut transform = Transform::default();
+    //         transform.set_xyz(pixel.x as f32, pixel.y as f32, 0.0);
+
+    //         let sprite_number = if pixel.y as u32 == 0 {
+    //             0
+    //         } else {
+    //             34
+    //         };
+
+    //         let sprite_render = SpriteRender {
+    //             sprite_sheet: sprite_sheet.clone(),
+    //             sprite_number: sprite_number,
+    //         };
+
+    //         world
+    //             .create_entity()
+    //             .with(sprite_render.clone())
+    //             .with(Pixel::new(transform.translation().x as u32, transform.translation().y as u32))
+    //             .with(FirePixelAnimation::new(0 as usize, 34 as usize))
+    //             .with(transform)
+    //             .build();
+    //     }
+    // }
+
+    world
+        .create_entity()
+        .with(pixel_grid)
+        .build();
+
+}
+
+
+
+
 pub struct FirePixelAnimation {
     pub start_sprite_index: usize,
     pub frames: usize,
@@ -132,9 +259,19 @@ impl FirePixelAnimation {
     }
 }
 
-impl Component for FirePixelAnimation{
+impl Component for FirePixelAnimation {
     type Storage = DenseVecStorage<Self>;
 }
+
+
+
+
+
+
+
+
+
+
 
 pub struct PixelGenerator {
     pub frequency: f32,

@@ -24,12 +24,11 @@ impl<'s> System<'s> for MovePixelSystem {
         WriteStorage<'s, Transform>,
         Read<'s, Time>,
         Entities<'s>,
-
     );
 
     fn run(&mut self, (pixels, mut locals, time, entities): Self::SystemData) {
         for (pixel, local, entity) in (&pixels, &mut locals, &*entities).join() {
-            local.translate_y(50.0 * time.delta_seconds());
+            //local.translate_y(50.0 * time.delta_seconds());
             
             let pixel_y = local.translation().y;
             if pixel_y >= ARENA_HEIGHT {

@@ -35,7 +35,7 @@ impl<'s> System<'s> for GeneratePixelSystem {
                         let my_entity = lazy
                             .create_entity(&entities)
                             .with(sprite_render)
-                            .with(Pixel::new())
+      //                      .with(Pixel::new())
                             .with(transform)
                             .with(FirePixelAnimation::new(0 as usize, 34 as usize))
                             .build();

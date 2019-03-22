@@ -152,11 +152,13 @@ fn initialise_board(world: &mut World, sprite_sheet: SpriteSheetHandle) {
 
 pub struct PixelGrid {
     pub grid: Vec<Vec<Entity>>,
+    pub current_row: u32,
 }
 
 impl PixelGrid {
     pub fn new(world: &mut World, sprite_sheet: SpriteSheetHandle) -> PixelGrid {
         let mut grid: Vec<Vec<Entity>> = Vec::new();
+        let current_row: u32 = 0;
         for y in 0..(ARENA_HEIGHT as f32) as u32 {
             let mut row = Vec::new();
             
@@ -192,6 +194,7 @@ impl PixelGrid {
         }
         PixelGrid {
             grid: grid,
+            current_row: current_row
         }
     }
 }

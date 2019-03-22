@@ -1,4 +1,5 @@
 extern crate amethyst;
+extern crate rand;
 
 mod fire;
 mod systems;    //import systems
